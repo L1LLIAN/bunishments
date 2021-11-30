@@ -12,4 +12,5 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("org.jetbrains:annotations:23.0.0")
 }
