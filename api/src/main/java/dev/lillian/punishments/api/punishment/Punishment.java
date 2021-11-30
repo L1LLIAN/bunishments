@@ -3,6 +3,8 @@ package dev.lillian.punishments.api.punishment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.intellij.lang.annotations.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 public final class Punishment {
     public static final long PERMANENT_DURATION = -1;
