@@ -6,11 +6,11 @@ import dev.lillian.punishments.api.punishment.Punishment
 import dev.lillian.punishments.plugin.model.PunishmentDTO
 import java.util.*
 
-class MongoPunishmentsRepository(private val mongoCollection: MongoCollection<PunishmentDTO>) :
-    IPunishmentsRepository {
+class MongoPunishmentRepository(private val mongoCollection: MongoCollection<PunishmentDTO>) :
+    IPunishmentRepository {
 
     private fun Punishment.toDTO(): PunishmentDTO {
-        return PunishmentDTO(null, id, type, timestamp, duration, punishedId, punisherId, removerId, removalTimestamp)
+        return PunishmentDTO(id, type, timestamp, duration, punishedId, punisherId, removerId, removalTimestamp)
     }
 
     private fun PunishmentDTO.toPunishment(): Punishment {

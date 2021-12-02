@@ -11,6 +11,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://nexus.velocitypowered.com/repository/maven-public/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -22,6 +23,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("org.mongojack:mongojack:4.3.0")
+    implementation("com.github.Revxrsal.Lamp:common:1.8")
+    implementation("com.github.Revxrsal.Lamp:velocity:1.8")
 
     compileOnly("com.velocitypowered:velocity-api:3.0.1")
     kapt("com.velocitypowered:velocity-api:3.0.1")

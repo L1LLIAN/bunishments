@@ -11,13 +11,15 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.lillian.punishments.api.IPunishmentsAPI
 import dev.lillian.punishments.api.punishment.Punishment
-import dev.lillian.punishments.api.punishment.PunishmentType
+import dev.lillian.punishments.plugin.command.KickCommand
 import dev.lillian.punishments.plugin.config.PluginConfiguration
 import dev.lillian.punishments.plugin.model.PunishmentDTO
-import dev.lillian.punishments.plugin.repository.MongoPunishmentsRepository
+import dev.lillian.punishments.plugin.repository.MongoPunishmentRepository
+import dev.lillian.punishments.plugin.service.PunishmentService
 import org.bson.UuidRepresentation
 import org.mongojack.JacksonMongoCollection
 import org.slf4j.Logger
+import revxrsal.commands.velocity.core.VelocityHandler
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -59,27 +61,17 @@ class VelocityPlugin @Inject constructor(
                 UuidRepresentation.STANDARD
             )
 
-        val repository = MongoPunishmentsRepository(collection)
-        val id = UUID.randomUUID()
+        val repository = MongoPunishmentRepository(collection)
+        val service = PunishmentService(repository, proxyServer)
 
-        repository.save(
-            Punishment(
-                id,
-                PunishmentType.KICK,
-                System.currentTimeMillis(),
-                -1,
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                null,
-                -1
-            )
-        )
+        val commandHandler = VelocityHandler(this, proxyServer)
 
-        logger.info("Saved example punishment with id ($id)")
-        logger.info("Fetched example punishment by id ($id) = ${repository.findById(id)}")
+        commandHandler.registerDependency(PunishmentService::class.java, service)
+        commandHandler.register(KickCommand())
     }
 
     @Subscribe
+    @Suppress("UNUSED_PARAMETER")
     fun onShutdown(event: ProxyShutdownEvent) {
         mongoClient.close()
     }
