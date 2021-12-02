@@ -1,5 +1,6 @@
 package dev.lillian.punishments.plugin.service
 
+import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.lillian.punishments.api.punishment.Punishment
@@ -10,16 +11,14 @@ import net.kyori.adventure.text.Component
 import java.util.*
 
 class PunishmentService(private val punishmentRepository: IPunishmentRepository, private val proxyServer: ProxyServer) {
-    // TODO: Support console bans
-    // Should have default UUID(0, 0) with name Console* to indicate that it isn't a player punisher.
-    fun punish(target: Player, punisher: Player, type: PunishmentType, duration: Long) {
+    fun punish(target: Player, punisher: CommandSource, type: PunishmentType, duration: Long) {
         val punishment = Punishment(
             UUID.randomUUID(),
             type,
             System.currentTimeMillis(),
             duration,
             target.uniqueId,
-            punisher.uniqueId,
+            if (punisher is Player) punisher.uniqueId else UUID(0, 0),
             null,
             Punishment.PERMANENT_DURATION
         )
