@@ -5,15 +5,19 @@ import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClients
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.lillian.punishments.api.IPunishmentsAPI
 import dev.lillian.punishments.api.punishment.Punishment
+import dev.lillian.punishments.plugin.command.BanCommand
 import dev.lillian.punishments.plugin.command.KickCommand
 import dev.lillian.punishments.plugin.config.PluginConfiguration
+import dev.lillian.punishments.plugin.listener.PlayerJoinListener
 import dev.lillian.punishments.plugin.model.PunishmentDTO
+import dev.lillian.punishments.plugin.repository.IPunishmentRepository
 import dev.lillian.punishments.plugin.repository.MongoPunishmentRepository
 import dev.lillian.punishments.plugin.service.PunishmentService
 import org.bson.UuidRepresentation
@@ -34,6 +38,7 @@ import javax.inject.Inject
     url = "https://github.com/L1LLIAN/bunishments/",
     authors = ["Lillian Armes - lilyarmes@protonmail.com"]
 )
+@Suppress("UNUSED_PARAMETER")
 class VelocityPlugin @Inject constructor(
     @DataDirectory private val dataDir: Path,
     private val logger: Logger,
@@ -50,6 +55,9 @@ class VelocityPlugin @Inject constructor(
             .build()
     )
 
+    val punishmentRepository: IPunishmentRepository
+    val punishmentService: PunishmentService
+
     init {
         val collection = JacksonMongoCollection.builder()
             .withObjectMapper(objectMapper)
@@ -61,17 +69,22 @@ class VelocityPlugin @Inject constructor(
                 UuidRepresentation.STANDARD
             )
 
-        val repository = MongoPunishmentRepository(collection)
-        val service = PunishmentService(repository, proxyServer)
+        punishmentRepository = MongoPunishmentRepository(collection)
+        punishmentService = PunishmentService(punishmentRepository, proxyServer)
 
         val commandHandler = VelocityHandler(this, proxyServer)
 
-        commandHandler.registerDependency(PunishmentService::class.java, service)
+        commandHandler.registerDependency(PunishmentService::class.java, punishmentService)
         commandHandler.register(KickCommand())
+        commandHandler.register(BanCommand())
     }
 
     @Subscribe
-    @Suppress("UNUSED_PARAMETER")
+    fun onInitialize(event: ProxyInitializeEvent) {
+        proxyServer.eventManager.register(this, PlayerJoinListener(punishmentRepository))
+    }
+
+    @Subscribe
     fun onShutdown(event: ProxyShutdownEvent) {
         mongoClient.close()
     }

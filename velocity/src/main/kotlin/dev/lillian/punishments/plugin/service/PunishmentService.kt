@@ -32,7 +32,7 @@ class PunishmentService(private val punishmentRepository: IPunishmentRepository,
 
         when (punishment.type) {
             BLACKLIST -> TODO()
-            BAN -> TODO()
+            BAN -> punishedPlayer.disconnect(Component.text("You have been banned!"))
             KICK -> punishedPlayer.disconnect(Component.text("You have been kicked!"))
             MUTE -> TODO()
             WARNING -> TODO()

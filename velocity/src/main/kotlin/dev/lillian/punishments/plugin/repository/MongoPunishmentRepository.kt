@@ -14,7 +14,7 @@ class MongoPunishmentRepository(private val mongoCollection: MongoCollection<Pun
     }
 
     private fun PunishmentDTO.toPunishment(): Punishment {
-        return Punishment(id, type, timestamp, duration, punishedID, punisherId, removerId, removalTimestamp)
+        return Punishment(id, type, timestamp, duration, punishedId, punisherId, removerId, removalTimestamp)
     }
 
     override fun save(punishment: Punishment) {
@@ -25,11 +25,11 @@ class MongoPunishmentRepository(private val mongoCollection: MongoCollection<Pun
         return mongoCollection.find(Filters.eq("id", uuid)).first()?.toPunishment()
     }
 
-    override fun findByPunishedId(uuid: UUID): Collection<Punishment> {
-        TODO("Not yet implemented")
+    override fun findByPunishedId(uuid: UUID): Iterable<Punishment> {
+        return mongoCollection.find(Filters.eq("punishedId", uuid)).map { it.toPunishment() }
     }
 
-    override fun findByPunisherId(uuid: UUID): Collection<Punishment> {
+    override fun findByPunisherId(uuid: UUID): Iterable<Punishment> {
         TODO("Not yet implemented")
     }
 }

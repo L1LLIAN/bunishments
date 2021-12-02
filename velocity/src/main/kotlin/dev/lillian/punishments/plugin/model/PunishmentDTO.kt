@@ -10,7 +10,7 @@ data class PunishmentDTO(
     val type: PunishmentType,
     val timestamp: Long,
     val duration: Long,
-    val punishedID: UUID,
+    val punishedId: UUID,
     val punisherId: UUID,
     val removerId: UUID?,
     val removalTimestamp: Long

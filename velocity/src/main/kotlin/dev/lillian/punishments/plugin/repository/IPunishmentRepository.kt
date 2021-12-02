@@ -8,7 +8,7 @@ interface IPunishmentRepository {
 
     fun findById(uuid: UUID): Punishment?
 
-    fun findByPunishedId(uuid: UUID): Collection<Punishment>
+    fun findByPunishedId(uuid: UUID): Iterable<Punishment>
 
-    fun findByPunisherId(uuid: UUID): Collection<Punishment>
+    fun findByPunisherId(uuid: UUID): Iterable<Punishment>
 }
